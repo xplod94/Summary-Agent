@@ -1,0 +1,61 @@
+<div class="bg-gray-900 text-white h-screen flex flex-col">
+
+  <!-- Header -->
+  <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+    <h1 class="text-lg font-semibold">AI Summary Chat</h1>
+    <span class="text-sm text-gray-400">This AI returns a structured output with a summary of what you say/ask along
+      with a confidence score</span>
+  </div>
+
+  <!-- Chat Messages -->
+  <div #chatWindow class="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+
+    @for (msg of messages(); track msg) {
+    <div class="flex" [ngClass]="{
+           'justify-end': msg.sender === 'user',
+           'justify-start': msg.sender === 'ai'
+         }">
+
+      <div class="px-4 py-2 rounded-2xl max-w-xl break-words" [ngClass]="{
+          'bg-blue-600 text-white': msg.sender === 'user',
+          'bg-gray-800 text-gray-200': msg.sender === 'ai'
+        }">
+
+        @if(msg.confidence) {
+        <div class="pb-2"><b>Summary:</b> {{ msg.text }}</div>
+        <hr class="border-gray-600" />
+        <div class="pt-2"><b>Confidence:</b> {{ msg.confidence }}</div>
+        } @else {
+        {{ msg.text }}
+        }
+
+      </div>
+    </div>
+    }
+
+    @if (loading()) {
+    <div class="flex justify-start animate-pulse">
+      <div class="px-4 py-2 rounded-2xl max-w-xl break-words bg-gray-800 text-gray-200">
+        Thinking....
+      </div>
+    </div>
+    }
+
+  </div>
+
+  <!-- Input -->
+  <div class="border-t border-gray-800 p-4 bg-gray-900">
+    <div class="flex items-center gap-2">
+
+      <input type="text" [(ngModel)]="message" (keyup.enter)="sendMessage()" placeholder="Type your message..."
+        class="flex-1 bg-gray-800 text-white px-4 py-2 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
+
+      <button [disabled]="loading()" (click)="sendMessage()"
+        class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl transition disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none">
+        Send
+      </button>
+
+    </div>
+  </div>
+
+</div>
